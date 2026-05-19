@@ -1,0 +1,108 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "mautrix-ghdiscussions.fullname" . }}
+  labels:
+    {{- include "mautrix-ghdiscussions.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "mautrix-ghdiscussions.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+        {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "mautrix-ghdiscussions.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      serviceAccountName: {{ include "mautrix-ghdiscussions.serviceAccountName" . }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: bridge
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: {{ include "mautrix-ghdiscussions.image" . }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          env:
+            - name: UID
+              value: {{ .Values.securityContext.runAsUser | default 1337 | quote }}
+            - name: GID
+              value: {{ .Values.securityContext.runAsGroup | default 1337 | quote }}
+            {{- with .Values.extraEnv }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          volumeMounts:
+            - name: config
+              mountPath: /data/config.yaml
+              subPath: config.yaml
+              readOnly: true
+            {{- if .Values.registration }}
+            - name: config
+              mountPath: /data/registration.yaml
+              subPath: registration.yaml
+              readOnly: true
+            {{- end }}
+            {{- if or .Values.githubApp.privateKey .Values.githubApp.existingSecret }}
+            - name: github-app-key
+              mountPath: {{ .Values.config.network.private_key_path }}
+              subPath: {{ .Values.githubApp.existingSecretKey | default "github-app.pem" }}
+              readOnly: true
+            {{- end }}
+            - name: data
+              mountPath: /data
+            {{- with .Values.extraVolumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+        - name: config
+          secret:
+            secretName: {{ include "mautrix-ghdiscussions.fullname" . }}
+        {{- if .Values.githubApp.existingSecret }}
+        - name: github-app-key
+          secret:
+            secretName: {{ .Values.githubApp.existingSecret }}
+        {{- else if .Values.githubApp.privateKey }}
+        - name: github-app-key
+          secret:
+            secretName: {{ include "mautrix-ghdiscussions.fullname" . }}
+        {{- end }}
+        - name: data
+          {{- if .Values.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.existingClaim | default (printf "%s-data" (include "mautrix-ghdiscussions.fullname" .)) }}
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
+        {{- with .Values.extraVolumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

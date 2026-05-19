@@ -1,0 +1,66 @@
+name: Go
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  GOTOOLCHAIN: local
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Install libolm
+        run: sudo apt-get update && sudo apt-get install -y libolm-dev libolm3
+
+      - name: Run tests
+        run: go test ./...
+
+      - name: Build binary
+        run: chmod +x build.sh && ./build.sh
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Install libolm
+        run: sudo apt-get update && sudo apt-get install -y libolm-dev libolm3
+
+      - name: Install lint tools
+        run: |
+          go install golang.org/x/tools/cmd/goimports@latest
+          go install honnef.co/go/tools/cmd/staticcheck@latest
+
+      - name: Run pre-commit
+        uses: pre-commit/action@v3.0.1
+
+  helm-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: azure/setup-helm@v4
+        with:
+          version: v3.17.0
+
+      - name: Lint Helm chart
+        run: helm lint charts/mautrix-ghdiscussions
+
+      - name: Template Helm chart
+        run: helm template test charts/mautrix-ghdiscussions --values charts/mautrix-ghdiscussions/ci/test-values.yaml

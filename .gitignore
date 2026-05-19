@@ -1,5 +1,9 @@
 /mautrix-ghdiscussions
 *.exe
 config.yaml
+registration.yaml
 *.pem
 .DS_Store
+dist/
+*.tgz
+coverage.out

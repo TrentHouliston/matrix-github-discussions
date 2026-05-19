@@ -1,0 +1,19 @@
+GitHub Discussions bridge installed.
+
+1. Configure GitHub App webhook URL:
+   {{ .Values.config.bridge.public_address }}/_ghdiscussions/webhook
+
+2. If registration.yaml was not provided in Helm values, the pod generates it on first start
+   (the container exits after writing /data/registration.yaml). Register it with your homeserver:
+   https://docs.mau.fi/bridges/general/registering-appservices.html
+
+   kubectl logs -n {{ .Release.Namespace }} deploy/{{ include "mautrix-ghdiscussions.fullname" . }}
+   kubectl exec -n {{ .Release.Namespace }} deploy/{{ include "mautrix-ghdiscussions.fullname" . }} -- cat /data/registration.yaml
+
+3. Restart the deployment after registering the appservice:
+   kubectl rollout restart -n {{ .Release.Namespace }} deploy/{{ include "mautrix-ghdiscussions.fullname" . }}
+
+4. Log in from Matrix: message the bridge bot with `login` or `!gh login`.
+
+Appservice tokens (save these — they are in the Secret):
+  kubectl get secret -n {{ .Release.Namespace }} {{ include "mautrix-ghdiscussions.fullname" . }} -o jsonpath='{.data.config\.yaml}' | base64 -d | grep -E 'as_token|hs_token'

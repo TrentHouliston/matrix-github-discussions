@@ -1,0 +1,63 @@
+# Example production overrides — copy to my-values.yaml and edit.
+
+replicaCount: 1
+
+image:
+  repository: ghcr.io/trenthouliston/matrix-github-discussions
+  tag: v0.1.0
+  pullPolicy: IfNotPresent
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  hosts:
+    - host: bridge.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: mautrix-ghdiscussions-tls
+      hosts:
+        - bridge.example.com
+
+persistence:
+  enabled: true
+  size: 2Gi
+
+config:
+  homeserver:
+    address: https://matrix.example.com
+    domain: example.com
+  bridge:
+    public_address: https://bridge.example.com
+    permissions:
+      example.com: user
+      "@admin:example.com": admin
+  database:
+    type: postgres
+    uri: postgres://mautrix:CHANGE_ME@postgresql.matrix.svc.cluster.local:5432/mautrix_ghdiscussions?sslmode=disable
+  logging:
+    min_level: warn
+  network:
+    client_id: "Iv1.XXXXXXXX"
+    app_id: 123456
+    webhook_secret: "CHANGE_ME"
+    app_slug: my-ghdiscussions-bridge
+
+appservice:
+  as_token: "CHANGE_ME_OPENSSL_RAND_HEX_32"
+  hs_token: "CHANGE_ME_OPENSSL_RAND_HEX_32"
+  bot_username: ghdiscussionsbot
+
+githubApp:
+  existingSecret: mautrix-ghdiscussions-github-app
+  existingSecretKey: github-app.pem
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    memory: 512Mi

@@ -77,10 +77,58 @@ GitHub Discussions ──webhook──► Bridge ──AS API──► Matrix
 - User tokens expire after ~8 hours; the bridge refreshes them automatically
 - Starting new Discussions from Matrix is not supported in v1
 
+## Docker
+
+```bash
+docker build -t mautrix-ghdiscussions:local .
+docker run --rm -it -v mautrix_ghd_data:/data -p 29348:29348 mautrix-ghdiscussions:local
+```
+
+Or use Compose (includes PostgreSQL):
+
+```bash
+docker compose up --build
+```
+
+Published images (on `main` and version tags): `ghcr.io/trenthouliston/matrix-github-discussions`
+
+## Kubernetes (Helm)
+
+See [charts/mautrix-ghdiscussions/README.md](charts/mautrix-ghdiscussions/README.md).
+
+```bash
+helm install ghd ./charts/mautrix-ghdiscussions -f my-values.yaml
+```
+
+After tagging a release (`v0.1.0`), the chart is also published to:
+
+```bash
+helm install ghd oci://ghcr.io/trenthouliston/charts/mautrix-ghdiscussions --version 0.1.0
+```
+
+Copy [charts/mautrix-ghdiscussions/values-production.example.yaml](charts/mautrix-ghdiscussions/values-production.example.yaml) as a starting point.
+
+## CI and releases
+
+| Workflow | Trigger | Purpose |
+|----------|---------|---------|
+| `go.yml` | push / PR | Tests, pre-commit, Helm lint |
+| `docker.yml` | push / PR / tags | Multi-arch image to GHCR |
+| `release.yml` | tags `v*` | Goreleaser binaries + Helm chart OCI + GitHub Release |
+
+Create a release:
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
+
 ## Development
 
 ```bash
 go test ./pkg/connector/...
+./build.sh
+pre-commit run --all-files   # optional
 ```
 
 Building the full binary requires libolm headers (`brew install libolm` on macOS).

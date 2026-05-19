@@ -1,0 +1,53 @@
+# Goreleaser is optional; primary distribution is Docker + Helm.
+# Run locally with: goreleaser release --snapshot --clean
+version: 2
+
+project_name: mautrix-ghdiscussions
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: mautrix-ghdiscussions
+    main: ./cmd/mautrix-ghdiscussions
+    binary: mautrix-ghdiscussions
+    env:
+      - CGO_ENABLED=1
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w
+      - -X main.Tag={{.Version}}
+      - -X main.Commit={{.Commit}}
+      - -X main.BuildTime={{.Date}}
+
+archives:
+  - formats: [tar.gz]
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    files:
+      - README.md
+      - LICENSE
+
+checksum:
+  name_template: checksums.txt
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^chore:"
+
+release:
+  github:
+    owner: "{{ .Env.GITHUB_REPOSITORY_OWNER }}"
+    name: "{{ .Env.GITHUB_REPOSITORY_NAME }}"
+  draft: false
+  prerelease: auto
+  extra_files:
+    - glob: dist/mautrix-ghdiscussions-*.tgz

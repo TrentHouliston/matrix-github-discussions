@@ -1,0 +1,26 @@
+ingress:
+  enabled: true
+  hosts:
+    - host: bridge.test.example
+      paths:
+        - path: /
+          pathType: Prefix
+
+config:
+  bridge:
+    public_address: https://bridge.test.example
+  network:
+    client_id: test-client-id
+    app_id: 12345
+    webhook_secret: test-secret
+    app_slug: test-app
+
+appservice:
+  as_token: test-as-token
+  hs_token: test-hs-token
+
+githubApp:
+  privateKey: |
+    -----BEGIN RSA PRIVATE KEY-----
+    TEST
+    -----END RSA PRIVATE KEY-----

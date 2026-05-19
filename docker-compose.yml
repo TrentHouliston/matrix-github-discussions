@@ -1,0 +1,37 @@
+# Local development stack: PostgreSQL + bridge.
+# First run generates /data/config.yaml and /data/registration.yaml in the bridge_data volume.
+# Register registration.yaml with your homeserver, then fill in config and restart.
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: mautrix
+      POSTGRES_PASSWORD: mautrix
+      POSTGRES_DB: mautrix_ghdiscussions
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mautrix -d mautrix_ghdiscussions"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  bridge:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "29348:29348"
+    environment:
+      UID: "1337"
+      GID: "1337"
+    volumes:
+      - bridge_data:/data
+
+volumes:
+  postgres_data:
+  bridge_data:

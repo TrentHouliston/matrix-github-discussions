@@ -1,0 +1,117 @@
+# Default values for mautrix-ghdiscussions.
+# See charts/mautrix-ghdiscussions/README.md for a full walkthrough.
+
+replicaCount: 1
+
+image:
+  repository: ghcr.io/trenthouliston/matrix-github-discussions
+  pullPolicy: IfNotPresent
+  tag: "" # defaults to chart appVersion
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext:
+  fsGroup: 1337
+
+securityContext:
+  runAsUser: 1337
+  runAsGroup: 1337
+  runAsNonRoot: true
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: false
+
+service:
+  type: ClusterIP
+  port: 29348
+  annotations: {}
+
+# Ingress exposes the appservice HTTP endpoint (webhooks + provisioning).
+# Set config.bridge.public_address to https://<ingress-host> (no trailing slash).
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: bridge.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+resources: {}
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+persistence:
+  enabled: true
+  storageClass: ""
+  accessMode: ReadWriteOnce
+  size: 1Gi
+  existingClaim: ""
+
+# Bridge configuration (rendered into Secret key config.yaml).
+# Docs: https://docs.mau.fi/bridges/go/setup.html
+config:
+  homeserver:
+    address: https://matrix.example.com
+    domain: example.com
+    software: standard
+  appservice:
+    hostname: 0.0.0.0
+    port: 29348
+  # Public HTTPS URL of this bridge (must match ingress when enabled).
+  bridge:
+    public_address: https://bridge.example.com
+    permissions:
+      "*": user
+  database:
+    type: postgres
+    uri: postgres://mautrix:mautrix@postgres:5432/mautrix_ghdiscussions?sslmode=disable
+  logging:
+    min_level: info
+  # GitHub App / network connector settings (see pkg/connector/example-config.yaml).
+  network:
+    client_id: ""
+    app_id: 0
+    private_key_path: /data/github-app.pem
+    webhook_secret: ""
+    app_slug: ""
+    reaction_poll_interval_seconds: 60
+    reaction_poll_active_windows: 5
+
+# Appservice tokens — leave empty to auto-generate on first config render (not recommended for prod).
+# Prefer setting stable tokens and passing registration.yaml to your homeserver once.
+appservice:
+  as_token: ""
+  hs_token: ""
+  bot_username: ghdiscussionsbot
+
+# GitHub App private key (PEM). Prefer existingSecret in production.
+githubApp:
+  privateKey: ""
+  existingSecret: ""
+  existingSecretKey: github-app.pem
+
+# Optional: pre-provision registration.yaml content (multiline string).
+# If empty, the container generates it on first start (see NOTES.txt).
+registration: ""
+
+# Extra environment variables for the bridge container.
+extraEnv: []
+
+# Additional volumes / volumeMounts.
+extraVolumes: []
+extraVolumeMounts: []

@@ -1,0 +1,9 @@
+.git
+.github
+charts
+dist
+*.md
+config.yaml
+registration.yaml
+*.pem
+.DS_Store
