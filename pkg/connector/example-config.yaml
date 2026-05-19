@@ -1,0 +1,14 @@
+# GitHub App client ID (from the app's settings page).
+client_id: ""
+# GitHub App ID (numeric).
+app_id: 0
+# Path to the GitHub App private key PEM file (used for token refresh with the App).
+private_key_path: ""
+# Webhook secret configured on the GitHub App.
+webhook_secret: ""
+# URL slug of the GitHub App (used in install instructions), e.g. "my-ghdiscussions-bridge".
+app_slug: ""
+# How often to poll for reaction changes on active portals (seconds).
+reaction_poll_interval_seconds: 60
+# How many poll intervals a portal stays "active" after the last webhook event.
+reaction_poll_active_windows: 5

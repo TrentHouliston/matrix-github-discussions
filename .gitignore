@@ -1,0 +1,5 @@
+/mautrix-ghdiscussions
+*.exe
+config.yaml
+*.pem
+.DS_Store
