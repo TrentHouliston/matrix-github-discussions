@@ -57,6 +57,40 @@ Start the bridge and register the appservice on your homeserver.
 3. Install the GitHub App on repositories you want bridged
 4. New discussion activity in those repos will create/use Matrix portal rooms
 
+## Which discussions are mirrored?
+
+There is **no per-discussion picker** in v1. Scope is controlled entirely by **where you install the GitHub App**:
+
+| You control | How |
+|-------------|-----|
+| **Repositories** | Install the bridge's GitHub App on specific repos (or an org). Only those repos are tracked in the `github_installation` table. |
+| **Your Matrix account** | Each Matrix user logs in separately; webhooks are routed to the GitHub user who installed the App on that repo. |
+| **What gets a room** | Each **Discussion** in a tracked repo gets its own Matrix portal room when GitHub sends a `discussion` / `discussion_comment` webhook (typically when the discussion is created or someone comments). |
+
+What is **not** supported yet:
+
+- Choosing individual discussions or categories (e.g. only "Q&A")
+- Bridging old discussions that had no activity since install (no backfill of history unless you add comments)
+- Starting new discussions from Matrix
+
+To stop mirroring a repo, remove the GitHub App installation from that repository (or org) in GitHub settings.
+
+## Quick test (Docker)
+
+```bash
+docker pull ghcr.io/trenthouliston/matrix-github-discussions:latest
+
+# First run writes example config + registration to the volume, then exits.
+docker run --rm -v ghd_data:/data -p 29348:29348 \
+  ghcr.io/trenthouliston/matrix-github-discussions:latest
+
+# Edit /data/config.yaml and /data/registration.yaml on the volume, register with Synapse, then:
+docker run -d --name ghd -v ghd_data:/data -p 29348:29348 \
+  ghcr.io/trenthouliston/matrix-github-discussions:latest
+```
+
+See [releases](https://github.com/TrentHouliston/matrix-github-discussions/releases) for versioned images, binaries, and the Helm chart.
+
 ## Architecture
 
 ```
