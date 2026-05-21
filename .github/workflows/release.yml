@@ -24,7 +24,7 @@ jobs:
       - name: Install libolm
         run: sudo apt-get update && sudo apt-get install -y libolm-dev libolm3
 
-      - uses: azure/setup-helm@v4
+      - uses: azure/setup-helm@v5
         with:
           version: v3.17.0
 
