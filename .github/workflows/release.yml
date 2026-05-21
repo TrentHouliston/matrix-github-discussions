@@ -16,14 +16,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-go@v6
-        with:
-          go-version-file: go.mod
-          cache: true
-
-      - name: Install libolm
-        run: sudo apt-get update && sudo apt-get install -y libolm-dev libolm3
-
       - uses: azure/setup-helm@v5
         with:
           version: v3.17.0
@@ -47,10 +39,11 @@ jobs:
           OWNER="$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')"
           helm push "dist/mautrix-ghdiscussions-${VERSION}.tgz" "oci://ghcr.io/${OWNER}/charts"
 
-      - uses: goreleaser/goreleaser-action@v6
-        with:
-          distribution: goreleaser
-          version: "~> v2"
-          args: release --clean
+      - name: Create GitHub Release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+            --title "${GITHUB_REF_NAME}" \
+            --generate-notes \
+            dist/mautrix-ghdiscussions-*.tgz
