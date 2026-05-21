@@ -1,4 +1,4 @@
-FROM golang:1.25-alpine3.21 AS builder
+FROM golang:1.25-alpine3.23 AS builder
 
 RUN apk add --no-cache git ca-certificates build-base olm-dev
 
@@ -6,7 +6,7 @@ COPY . /build
 WORKDIR /build
 RUN chmod +x build.sh && ./build.sh && install -m 0755 mautrix-ghdiscussions /usr/bin/mautrix-ghdiscussions
 
-FROM alpine:3.21
+FROM alpine:3.23
 
 ENV UID=1337 \
 	GID=1337
