@@ -87,14 +87,14 @@ func (g *graphQLClient) getViewer(ctx context.Context) (*viewerInfo, error) {
 }
 
 type discussionInfo struct {
-	ID        string
-	Number    int
-	Title     string
-	Body      string
-	URL       string
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	Author    userInfo
+	ID         string
+	Number     int
+	Title      string
+	Body       string
+	URL        string
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
+	Author     userInfo
 	Repository struct {
 		Owner struct {
 			Login string
@@ -270,10 +270,10 @@ func (g *graphQLClient) removeReaction(ctx context.Context, subjectID githubv4.I
 }
 
 type reactionGroupInfo struct {
-	Content           githubv4.ReactionContent
-	ViewerHasReacted  bool
-	TotalCount        int
-	Users             []userInfo
+	Content          githubv4.ReactionContent
+	ViewerHasReacted bool
+	TotalCount       int
+	Users            []userInfo
 }
 
 func (g *graphQLClient) getCommentReactions(ctx context.Context, commentID githubv4.ID) ([]reactionGroupInfo, error) {

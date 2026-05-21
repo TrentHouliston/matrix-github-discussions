@@ -43,13 +43,13 @@ type ghDiscussion struct {
 }
 
 type ghComment struct {
-	NodeID    string  `json:"node_id"`
-	Body      string  `json:"body"`
-	HTMLURL   string  `json:"html_url"`
-	User      ghUser  `json:"user"`
-	CreatedAt string  `json:"created_at"`
-	UpdatedAt string  `json:"updated_at"`
-	ParentID  *int64  `json:"parent_id,omitempty"`
+	NodeID    string `json:"node_id"`
+	Body      string `json:"body"`
+	HTMLURL   string `json:"html_url"`
+	User      ghUser `json:"user"`
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
+	ParentID  *int64 `json:"parent_id,omitempty"`
 	Parent    *struct {
 		NodeID string `json:"node_id"`
 	} `json:"parent,omitempty"`
@@ -173,10 +173,10 @@ func (gc *GHDConnector) handleDiscussionEdited(ctx context.Context, disc ghDiscu
 		portalKey := networkid.PortalKey{ID: networkid.PortalID(disc.NodeID), Receiver: loginID}
 		return &simplevent.Message[ghDiscussion]{
 			EventMeta: simplevent.EventMeta{
-				Type:       bridgev2.RemoteEventEdit,
-				PortalKey:  portalKey,
-				Sender:     bridgev2.EventSender{Sender: userID(disc.User)},
-				Timestamp:  parseGitHubTime(disc.UpdatedAt),
+				Type:      bridgev2.RemoteEventEdit,
+				PortalKey: portalKey,
+				Sender:    bridgev2.EventSender{Sender: userID(disc.User)},
+				Timestamp: parseGitHubTime(disc.UpdatedAt),
 			},
 			ID:            networkid.MessageID(disc.NodeID),
 			TargetMessage: networkid.MessageID(disc.NodeID),
@@ -207,22 +207,22 @@ func (gc *GHDConnector) handleDiscussionComment(ctx context.Context, action stri
 					Sender:       bridgev2.EventSender{Sender: userID(comment.User)},
 					Timestamp:    parseGitHubTime(comment.CreatedAt),
 				},
-				ID: networkid.MessageID(comment.NodeID),
-				Data: commentPayload{Comment: comment, Discussion: disc},
+				ID:                 networkid.MessageID(comment.NodeID),
+				Data:               commentPayload{Comment: comment, Discussion: disc},
 				ConvertMessageFunc: convertCommentMessage,
 			}
 			return msg
 		case "edited":
 			return &simplevent.Message[commentPayload]{
 				EventMeta: simplevent.EventMeta{
-					Type:       bridgev2.RemoteEventEdit,
-					PortalKey:  portalKey,
-					Sender:     bridgev2.EventSender{Sender: userID(comment.User)},
-					Timestamp:  parseGitHubTime(comment.UpdatedAt),
+					Type:      bridgev2.RemoteEventEdit,
+					PortalKey: portalKey,
+					Sender:    bridgev2.EventSender{Sender: userID(comment.User)},
+					Timestamp: parseGitHubTime(comment.UpdatedAt),
 				},
-				ID:            networkid.MessageID(comment.NodeID),
-				TargetMessage: networkid.MessageID(comment.NodeID),
-				Data:          commentPayload{Comment: comment, Discussion: disc},
+				ID:              networkid.MessageID(comment.NodeID),
+				TargetMessage:   networkid.MessageID(comment.NodeID),
+				Data:            commentPayload{Comment: comment, Discussion: disc},
 				ConvertEditFunc: convertCommentEdit,
 			}
 		case "deleted":

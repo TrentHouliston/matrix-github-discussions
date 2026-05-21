@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"time"
-
 )
 
 const installationTableSQL = `

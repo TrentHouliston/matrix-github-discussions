@@ -4,20 +4,20 @@ package connector
 type PortalKind string
 
 const (
-	PortalKindDiscussion   PortalKind = "discussion"
-	PortalKindIssue        PortalKind = "issue"
-	PortalKindPullRequest  PortalKind = "pull_request"
+	PortalKindDiscussion  PortalKind = "discussion"
+	PortalKindIssue       PortalKind = "issue"
+	PortalKindPullRequest PortalKind = "pull_request"
 )
 
 // PortalMetadata is stored in the portal metadata JSON column.
 type PortalMetadata struct {
-	Kind           PortalKind `json:"kind"`
-	RepoOwner      string     `json:"repo_owner"`
-	RepoName       string     `json:"repo_name"`
-	RepoID         int64      `json:"repo_id"`
-	DiscussionNum  int        `json:"discussion_number,omitempty"`
-	URL            string     `json:"url"`
-	RepositoryURL  string     `json:"repository_url"`
+	Kind          PortalKind `json:"kind"`
+	RepoOwner     string     `json:"repo_owner"`
+	RepoName      string     `json:"repo_name"`
+	RepoID        int64      `json:"repo_id"`
+	DiscussionNum int        `json:"discussion_number,omitempty"`
+	URL           string     `json:"url"`
+	RepositoryURL string     `json:"repository_url"`
 }
 
 // MessageMetadata stores GitHub-specific fields for bridged messages.

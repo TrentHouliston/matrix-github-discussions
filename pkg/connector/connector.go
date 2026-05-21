@@ -58,12 +58,12 @@ func (gc *GHDConnector) GetCapabilities() *bridgev2.NetworkGeneralCapabilities {
 
 func (gc *GHDConnector) GetName() bridgev2.BridgeName {
 	return bridgev2.BridgeName{
-		DisplayName:      "GitHub Discussions",
-		NetworkURL:       "https://github.com",
-		NetworkIcon:      "mxc://maunium.net/EPZUcFocxLVYJULAdyLjfAqC",
-		NetworkID:        "github-discussions",
-		BeeperBridgeType: "go.mau.fi/mautrix-ghdiscussions",
-		DefaultPort:      29348,
+		DisplayName:          "GitHub Discussions",
+		NetworkURL:           "https://github.com",
+		NetworkIcon:          "mxc://maunium.net/EPZUcFocxLVYJULAdyLjfAqC",
+		NetworkID:            "github-discussions",
+		BeeperBridgeType:     "go.mau.fi/mautrix-ghdiscussions",
+		DefaultPort:          29348,
 		DefaultCommandPrefix: "!gh",
 	}
 }

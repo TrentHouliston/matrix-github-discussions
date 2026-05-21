@@ -4,8 +4,8 @@ package connector
 type RemoteEntityKind string
 
 const (
-	RemoteEntityDiscussion RemoteEntityKind = "discussion"
-	RemoteEntityIssue      RemoteEntityKind = "issue"
+	RemoteEntityDiscussion  RemoteEntityKind = "discussion"
+	RemoteEntityIssue       RemoteEntityKind = "issue"
 	RemoteEntityPullRequest RemoteEntityKind = "pull_request"
 )
 

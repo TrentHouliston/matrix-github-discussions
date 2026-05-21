@@ -114,8 +114,8 @@ func (gc *GHDConnector) saveInstallation(ctx context.Context, evt installationEv
 }
 
 type installationRepositoriesEvent struct {
-	Action             string `json:"action"`
-	Installation       struct {
+	Action       string `json:"action"`
+	Installation struct {
 		ID int64 `json:"id"`
 	} `json:"installation"`
 	RepositoriesAdded []struct {

@@ -26,10 +26,10 @@ type GHDClient struct {
 }
 
 var (
-	_ bridgev2.NetworkAPI                    = (*GHDClient)(nil)
-	_ bridgev2.EditHandlingNetworkAPI        = (*GHDClient)(nil)
-	_ bridgev2.ReactionHandlingNetworkAPI    = (*GHDClient)(nil)
-	_ bridgev2.RedactionHandlingNetworkAPI   = (*GHDClient)(nil)
+	_ bridgev2.NetworkAPI                  = (*GHDClient)(nil)
+	_ bridgev2.EditHandlingNetworkAPI      = (*GHDClient)(nil)
+	_ bridgev2.ReactionHandlingNetworkAPI  = (*GHDClient)(nil)
+	_ bridgev2.RedactionHandlingNetworkAPI = (*GHDClient)(nil)
 )
 
 func (c *GHDClient) Connect(ctx context.Context) {
@@ -64,12 +64,12 @@ func (c *GHDClient) LogoutRemote(ctx context.Context) {}
 
 func (c *GHDClient) GetCapabilities(ctx context.Context, portal *bridgev2.Portal) *event.RoomFeatures {
 	return &event.RoomFeatures{
-		MaxTextLength: 65536,
-		Thread:        event.CapLevelFullySupported,
-		Reply:         event.CapLevelFullySupported,
-		Edit:          event.CapLevelFullySupported,
-		Delete:        event.CapLevelFullySupported,
-		Reaction:      event.CapLevelPartialSupport,
+		MaxTextLength:    65536,
+		Thread:           event.CapLevelFullySupported,
+		Reply:            event.CapLevelFullySupported,
+		Edit:             event.CapLevelFullySupported,
+		Delete:           event.CapLevelFullySupported,
+		Reaction:         event.CapLevelPartialSupport,
 		AllowedReactions: AllowedMatrixReactions,
 	}
 }

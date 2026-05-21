@@ -11,13 +11,13 @@ var ExampleConfig string
 
 // Config holds network-specific bridge configuration.
 type Config struct {
-	ClientID                      string `yaml:"client_id"`
-	AppID                         int64  `yaml:"app_id"`
-	PrivateKeyPath                string `yaml:"private_key_path"`
-	WebhookSecret                 string `yaml:"webhook_secret"`
-	AppSlug                       string `yaml:"app_slug"`
-	ReactionPollIntervalSeconds   int    `yaml:"reaction_poll_interval_seconds"`
-	ReactionPollActiveWindows     int    `yaml:"reaction_poll_active_windows"`
+	ClientID                    string `yaml:"client_id"`
+	AppID                       int64  `yaml:"app_id"`
+	PrivateKeyPath              string `yaml:"private_key_path"`
+	WebhookSecret               string `yaml:"webhook_secret"`
+	AppSlug                     string `yaml:"app_slug"`
+	ReactionPollIntervalSeconds int    `yaml:"reaction_poll_interval_seconds"`
+	ReactionPollActiveWindows   int    `yaml:"reaction_poll_active_windows"`
 }
 
 func upgradeConfig(helper configupgrade.Helper) {
